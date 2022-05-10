@@ -10,6 +10,7 @@ library(data.table)
 library(tidyverse)
 library(shiny)
 library(shinydashboard)
+library(rgdal)
 #maps
 library(maps)
 theme_set(theme_minimal())
@@ -62,29 +63,25 @@ crash$month <-month(crash$rdate)
 #filtering for incidents from 2011 onwards, that involved at least one bicycle
 crash = crash %>% filter(year %in% 2012:2022 & total_b > 0)
 
-#combining dummy injury variables
+#combining dummy injury and fatality variables
 for(i in 1:nrow(crash)){
   crash$inj[i] <- NA
-  if(crash$major_inj[i]> 0 | crash$minor_inj[i]>0 | crash$unknown_inj[i] >0) { 
-    crash$inj[i] <- 1
-  } else {
-    crash$inj[i] <- 0
+  if(crash$minor_inj[i]> 0) { 
+    crash$inj[i] <-'Minor Injury'
+  } else if (crash$unknown_inj[i] > 0) {
+    crash$inj[i] <- 'Unknown Injury'
+  }
+  else if (crash$major_inj[i]> 0) {
+    crash$inj[i] <- 'Major Injury'
+  } else if (crash$fatal[i]>0) {
+    crash$inj[i] <- 'Fatality'
   }
 }
+#filtering for incidents of injury
+crash = crash %>% filter(inj %in% c("Fatality","Major Injury", "Minor Injury", "Unknown Injury"))
 
-for(i in 1:nrow(crash)){
-  crash$hurt[i] <- NA
-  if(crash$inj[i]> 0) { 
-    crash$hurt[i] <- 'Injury'
-  } else if (crash$fatal[i] >0) {
-    crash$hurt[i] <- 'Fatality'
-  }
-  else {
-    crash$hurt[i] <- 0
-  }
-}
 #removing dummy columns
-crash <- select(crash, -rdate, -minor_inj, -major_inj, -unknown_inj)
+crash <- select(crash, -rdate, -minor_inj, -major_inj, -unknown_inj,)
 
 ```
 
@@ -153,12 +150,17 @@ dc +
              aes(x = lon,
                  y = lat,
                  color = inj),
-             size = .7) +
-    geom_point(data = crash,
-             aes(x = lon,
-                 y = lat,
-                 color = hurt),
-             size = 1)
+             size = .7)
 
+```
+
+```{r}
+w <- read.csv("./data/Wards_from_2022.csv", stringsAsFactors = TRUE)
+```
+```{r}
+crash %>% count(inj)
+```
+```{r}
+crash = crash %>% filter(inj %in% c("Fatality","Major Injury", "Minor Injury", "Unknown Injury"))
 ```
 
