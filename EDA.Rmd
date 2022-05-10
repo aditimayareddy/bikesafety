@@ -17,16 +17,16 @@ theme_set(theme_minimal())
 
 ```{r rawdatasets}
 #loading raw data sets
-crashes <- read.csv("./data/Crashes_in_DC.csv", stringsAsFactors = FALSE) #all crashes between April 1, 2012 to April 2022
+crash <- read.csv("./data/Crashes_in_DC.csv", stringsAsFactors = FALSE) #all crashes between April 1, 2012 to April 2022
 bike_reqs <- read.csv("./data/Vision_Zero_Safety_Bikers.csv", stringsAsFactors = FALSE) #Safety requests shared by bikers
 cp_reqs <- read.csv("./data/Vision_Zero_Safety_Cars_Pedestrians.csv", stringsAsFactors = FALSE) #Safety requests shared by pedestrians and drivers
 ```
 ```{r cleaningdatasets}
 #concatenating requests data sets
-allreqs <- rbind(bike_reqs, cp_reqs)
+reqs <- rbind(bike_reqs, cp_reqs)
 
 #selecting relevant columns
-allreqs <- allreqs %>% select(lat=Y,
+reqs <- reqs %>% select(lat=Y,
                               lon=X,
                               usertype=USERTYPE,
                               rdate=REQUESTDATE,
@@ -35,13 +35,13 @@ allreqs <- allreqs %>% select(lat=Y,
 )
 
 #formatting date information, adding year and month columns
-allreqs$rdate <-ymd_hms(allreqs$rdate)
-allreqs$year <-year(allreqs$rdate)
-allreqs$month <-month(allreqs$rdate)
+reqs$rdate <-ymd_hms(reqs$rdate)
+reqs$year <-year(reqs$rdate)
+reqs$month <-month(reqs$rdate)
 
 #cleaning crash data set
 #selecting relevant columns
-crash <- crashes %>% select(lat=LATITUDE,
+crash <- crash %>% select(lat=LATITUDE,
                             lon=LONGITUDE,
                             ward=WARD,
                             rdate=REPORTDATE,
@@ -62,15 +62,28 @@ crash$month <-month(crash$rdate)
 #filtering for incidents from 2011 onwards, that involved at least one bicycle
 crash = crash %>% filter(year %in% 2012:2022 & total_b > 0)
 
+#combining dummy injury variables
+for(i in 1:nrow(crash)){
+  crash$inj[i] <- NA
+  if(crash$major_inj[i]> 0 | crash$minor_inj[i]>0 | crash$unknown_inj[i] >0) { 
+    crash$inj[i] <- 1
+  } else {
+    crash$inj[i] <- 0
+  }
+}
+
+#removing dummy columns
+crash <- select(crash, -rdate, -minor_inj, -major_inj, -unknown_inj)
+
 ```
 
 ```{r exporting data sets}
 #exporting clean requests data to CSV
-write.csv(bike_reqs,"./data/bike_reqs_clean.csv", row.names = FALSE)
+write.csv(reqs,"./data/bike_reqs_clean.csv", row.names = FALSE)
 
 
 #exporting clean crash data to csv
-write.csv(crashes,"./data/crashes_clean.csv", row.names = FALSE)
+write.csv(crash,"./data/crashes_clean.csv", row.names = FALSE)
 
 ```
 
@@ -87,11 +100,14 @@ dcmap <- get_stamenmap(
 ```{r viewing map}
 dc <- ggmap(dcmap)
 ```
+```{r}
+dc
+```
 
 ```{r making map + viz}
 #visualizing safety requests
 dc +
-  geom_point(data = allreqs,
+  geom_point(data = reqs,
              aes(x = lon, y = lat, color = usertype),
              size = .7) +
   theme_map() +

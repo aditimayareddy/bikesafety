@@ -1,24 +1,27 @@
 #loading packages
 library(lubridate)
 library(ggplot2)
+library(ggmap)
 library(ggthemes)
 library(dplyr)
 library(data.table)
 library(tidyverse)
 library(shiny)
 library(shinydashboard)
+library(maps)
+theme_set(theme_minimal())
 
 #loading raw data sets
-crashes <- read.csv("./data/Crashes_in_DC.csv", stringsAsFactors = FALSE) #all crashes between April 1, 2012 to April 2022
-bike_reqs <- read.csv("./data/Vision_Zero_Safety_Bikers.csv", stringsAsFactors = FALSE) #Safety requests shared by bikers
-cp_reqs <- read.csv("./data/Vision_Zero_Safety_Cars_Pedestrians.csv", stringsAsFactors = FALSE) #Safety requests shared by pedestrians and drivers
+crash <- read.csv("/data/Crashes_in_DC.csv", stringsAsFactors = FALSE) #all crashes between April 1, 2012 to April 2022
+bike_reqs <- read.csv("/data/Vision_Zero_Safety_Bikers.csv", stringsAsFactors = FALSE) #Safety requests shared by bikers
+cp_reqs <- read.csv("/data/Vision_Zero_Safety_Cars_Pedestrians.csv", stringsAsFactors = FALSE) #Safety requests shared by pedestrians and drivers
 
 #concatenating requests data sets
-rbind(bike_reqs, cp_reqs)
+reqs <- rbind(bike_reqs, cp_reqs)
 
 #cleaning requests data set
 #selecting relevant columns
-allreqs <- allreqs %>% select(lat=Y,
+reqs <- allreqs %>% select(lat=Y,
                               lon=X,
                               usertype=USERTYPE,
                               rdate=REQUESTDATE,
@@ -27,16 +30,16 @@ allreqs <- allreqs %>% select(lat=Y,
 )
 #formatting date
 #formatting date information, adding year and month columns
-allreqs$rdate <-ymd_hms(allreqs$rdate)
-allreqs$year <-year(allreqs$rdate)
-allreqs$month <-month(allreqs$rdate)
+reqs$rdate <-ymd_hms(reqs$rdate)
+reqs$year <-year(reqs$rdate)
+reqs$month <-month(reqs$rdate)
 
 #exporting clean requests data to CSV
 write.csv(bike_reqs,"./data/bike_reqs_clean.csv", row.names = FALSE)
 
 #cleaning crash data set
 #selecting relevant columns
-crash <- crashes %>% select(lat=LATITUDE,
+crash <- crash %>% select(lat=LATITUDE,
                             lon=LONGITUDE,
                             ward=WARD,
                             rdate=REPORTDATE,
@@ -72,3 +75,5 @@ crash <- select(crash, -rdate, -minor_inj, -major_inj, -unknown_inj)
 
 #exporting clean crash data to csv
 write.csv(crashes,"./data/crashes_clean.csv", row.names = FALSE)
+
+
