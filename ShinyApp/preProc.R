@@ -68,6 +68,7 @@ crash$day <-day(crash$rdate)
 crash = crash %>% filter(year %in% 2012:2022 & total_b > 0)
 
 #compressing injury into one variable
+#NEED TO ADD LEVELS - https://stackoverflow.com/questions/63892630/transform-dummy-variable-into-categorical-variable
 for(i in 1:nrow(crash)){
   crash$inj[i] <- NA
   if(crash$major_inj[i]> 0 | crash$minor_inj[i]>0 | crash$unknown_inj[i] >0) { 

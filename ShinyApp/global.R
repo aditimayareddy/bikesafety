@@ -11,7 +11,7 @@ library(shinydashboard)
 library(maps)
 
 #loading cleaned data sets
-crash <- read.csv("data/crashes_clean.csv", stringsAsFactors = FALSE) #all crashes between April 1, 2012 to April 2022
+crash <- read.csv("./data/crashes_clean.csv", stringsAsFactors = FALSE) #cleaned crash data involving at least one bicycle between 2012-2022
 reqs <- read.csv("./data/bike_reqs_clean.csv", stringsAsFactors = FALSE) #Safety requests shared by bikers
 #w <- read.csv("./data/Wards_from_2022.csv", stringsAsFactors = TRUE)
 

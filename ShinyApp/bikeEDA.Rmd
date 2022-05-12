@@ -1,0 +1,81 @@
+# This File is for exploratory Data Analysis and Cleaning for R Shiny Project
+```{r global}
+
+##STARTING WITH EVERYTHING SHINY APP WOULD HAVE FROM GLOBAL SCRIPT
+
+#loading packages
+library(lubridate)
+library(ggplot2)
+library(ggmap)
+library(ggthemes)
+library(dplyr)
+library(data.table)
+library(tidyverse)
+library(shiny)
+library(shinydashboard)
+library(maps)
+
+#loading cleaned data sets
+crash <- read.csv("./data/crashes_clean.csv", stringsAsFactors = FALSE) #cleaned crash data involving at least one bicycle between 2012-2022
+reqs <- read.csv("./data/bike_reqs_clean.csv", stringsAsFactors = FALSE) #Safety requests shared by bikers
+#w <- read.csv("./data/Wards_from_2022.csv", stringsAsFactors = TRUE)
+```
+
+```{r creating map}
+dcmap <- get_stamenmap(
+  bbox = c(left = -77.225, bottom = 38.84 , right = -76.8125 , top = 39.000),
+  maptype = "terrain",
+  crop = TRUE,
+  color = "color",
+  zoom = 12
+)
+```
+```{r viewing map}
+dc <- ggmap(dcmap)
+```
+
+```{r}
+dc
+```
+```{r making map + viz + NEED HELP}
+#visualizing safety requests
+dc +
+  geom_point(data = reqs,
+             aes(x = lon,
+                 y = lat),
+             size = .7) +
+  theme_map() +
+  theme(legend.background = element_blank(),
+        legend.position = "bottom")
+
+```
+
+```{r NEEDS HELP}
+crash %>% count(ward) %>%
+  groupby(inj)
+```
+#filtering for incidents of injury
+crash = crash %>% filter(inj %in% c("Fatality","Major Injury", "Minor Injury", "Unknown Injury"))
+
+```{r visualizing injury and fatality}
+
+dc +
+  geom_point(data = crash,
+             aes(x = lon,
+                 y = lat,
+                 color = inj),
+             size = .7)
+
+```
+
+
+```{r}
+
+dc +
+  geom_point(data = crash,
+             aes(x = lon,
+                 y = lat,
+                 color = fatal),
+             size = .7)
+```
+
