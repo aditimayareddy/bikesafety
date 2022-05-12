@@ -29,14 +29,3 @@ wards <- st_read("./data/wards/Wards_from_2022.shp")
 wards <- wards %>% select(ward=WARD,
                           name=NAME
 )
-
-#getting base map
-dcmap <- get_stamenmap(
-  bbox = c(left = -77.225, bottom = 38.84 , right = -76.8125 , top = 39.000),
-  maptype = "terrain",
-  crop = TRUE,
-  color = "color",
-  zoom = 12
-)
-#setting base map as dc
-dc <- ggmap(dcmap)

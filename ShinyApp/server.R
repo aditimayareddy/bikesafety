@@ -1,26 +1,40 @@
-#
-# This is the server logic of a Shiny web application. You can run the
-# application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
 
 library(shiny)
 
-# Define server logic required to draw a histogram
+# Define server logic
 shinyServer(function(input, output) {
 
-    output$distPlot <- renderPlot({
-
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
+    year_crash <- reactive({
+      yc <- crash %>% filter(year == input$year)
+      return(yc)
+    })
+    
+    year_reqs <- reactive({
+      yr <- reqs %>% filter(year == input$year)
+      return(yr)
+    })
+    
+    
+    #FIRST TAB
+    output$inci <- renderLeaflet({
+      r <- leaflet(data = crash) %>% setView(lng = -77.0369, lat = 38.9072, zoom = 12)
+      r %>% addTiles() %>%
+        addMarkers(~lon, ~lat, popup = ~as.character(rdate), label = ~as.character(injtype),
+      )
+    })
+    
+    
+    #SECOND TAB
+    output$safreq <- renderLeaflet({
+      m <- leaflet(data = reqs) %>% setView(lng = -77.0369, lat = 38.9072, zoom = 12)
+      m %>% addTiles() %>%
+        addMarkers(~lon, ~lat, popup = ~as.character(comments), label = ~as.character(reqtype),
+                   clusterOptions = markerClusterOptions())
+    })
+    
+   
+     #POTENTIAL THIRD TAB
+    #output$other <- renderPLot({})
+                                
 
     })
-
-})

@@ -111,6 +111,10 @@ saveWidget(1, "ward_incident_density.html")
 
 
 
+```{r}
+m <- leaflet() %>% setView(lng = -71.0589, lat = 42.3601, zoom = 12)
+m %>% addTiles()
+```
 
 
 
@@ -238,3 +242,15 @@ dc +
              size = .7)
 ```
 
+
+
+#getting base map
+dcmap <- get_stamenmap(
+  bbox = c(left = -77.225, bottom = 38.84 , right = -76.8125 , top = 39.000),
+  maptype = "terrain",
+  crop = TRUE,
+  color = "color",
+  zoom = 12
+)
+#setting base map as dc
+dc <- ggmap(dcmap)

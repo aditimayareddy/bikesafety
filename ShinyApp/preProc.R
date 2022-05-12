@@ -1,15 +1,15 @@
 #loading packages
 library(lubridate)
 library(ggplot2)
-library(ggmap)
+#library(ggmap)
 library(ggthemes)
 library(dplyr)
 library(data.table)
 library(tidyverse)
 library(shiny)
 library(shinydashboard)
-library(maps)
-library(DT)
+#library(maps)
+#library(DT)
 library(leaflet)
 theme_set(theme_minimal())
 library(vroom) #fast data reading/importing
@@ -54,7 +54,7 @@ reqs$month <-month(reqs$rdate)
 reqs$month <-hour(reqs$rdate)
 
 #exporting clean requests data to CSV
-write.csv(bike_reqs,"./data/bike_reqs_clean.csv", row.names = FALSE)
+write.csv(reqs,"./data/bike_reqs_clean.csv", row.names = FALSE)
 
 #cleaning crash data set
 #selecting relevant columns
@@ -77,6 +77,9 @@ crash$year <-year(crash$rdate)
 crash$month <-month(crash$rdate)
 crash$hour <-hour(crash$rdate)
 crash$day <-day(crash$rdate)
+
+crash.year <- ordered(crash, levels = c(2011,2012,2013,2014,2015,2016,2017,2018,2019, "major_injury", "minor_injury", "unknown_injury", "no_injury"))
+is.factor(crash.year)
 
 #filtering for incidents from 2011 onwards, that involved at least one bicycle
 crash <- crash %>% filter(year %in% 2012:2022 & total_b > 0)
