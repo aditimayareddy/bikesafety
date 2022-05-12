@@ -254,3 +254,66 @@ dcmap <- get_stamenmap(
 )
 #setting base map as dc
 dc <- ggmap(dcmap)
+
+```{r}
+getColor <- function(crash) {
+  sapply(crash$injtype, function(injtype) {
+    if(injtype == "no_injury") {
+      "green"
+    } else if(injtype == "minor_injury" | injtype == "unknown_injury") {
+      "yellow"
+    } else if(injtype == "major_injury") {
+      'Orange'
+    } else if(injtype == "fatality"){
+      "red"
+    } })
+}
+```
+```{r}
+getColor(crash)
+```
+```{r}
+icons <- awesomeIcons(
+  icon = 'bicycle_outline',
+  iconColor = 'black',
+  library = 'ion',
+  markerColor = getColor(crash)
+)
+```
+
+
+```{r}
+head(icons)
+```
+```{r}
+r <- leaflet(data = crash) %>% setView(lng = -77.0369, lat = 38.9072, zoom = 12)
+r %>% addTiles() %>%
+  addAwesomeMarkers(~lon, ~lat, icon = icons, popup = ~as.character(rdate), label = ~as.character(injtype),
+             clusterOptions = markerClusterOptions())
+```
+```{r}
+# first 20 quakes
+df.20 <- crash[1:20,]
+
+getColor <- function(df.20) {
+  sapply(df.20$injtype, function(injtype) {
+  if(injtype == 'no_injury') {
+    color = "green"
+  } else if(injtype <= 'major_injury') {
+    color = "orange"
+  } else {
+    color = "white"
+  } })
+}
+
+icons <- awesomeIcons(
+  icon = 'bicycle',
+  iconColor = 'black',
+  library = 'ion',
+  markerColor = getColor(df.20)
+)
+
+leaflet(df.20) %>% addTiles() %>%
+  addAwesomeMarkers(~lon, ~lat, icon=icons, label=~as.character(injtype))
+```
+

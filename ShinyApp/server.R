@@ -20,7 +20,7 @@ shinyServer(function(input, output) {
       r <- leaflet(data = crash) %>% setView(lng = -77.0369, lat = 38.9072, zoom = 12)
       r %>% addTiles() %>%
         addMarkers(~lon, ~lat, popup = ~as.character(rdate), label = ~as.character(injtype),
-      )
+                   clusterOptions = markerClusterOptions(freezeAtZoom = ) )
     })
     
     

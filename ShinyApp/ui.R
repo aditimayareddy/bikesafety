@@ -11,7 +11,16 @@ shinyUI(fluidPage(
             h5("#TODO - fill in introduction information here"),
             selectInput("year",
                         "Select a year:",
-                        choices = unique(crash$year)
+                        choices = unique(crash$year),
+                        multiple = TRUE
+          ),
+          
+          selectInput("inj",
+                      "Select an incident type:",
+                      choices = c("Minor Injury" = "minor_injury",
+                                  "Major Injury" = "major_injury",
+                                  "Fatality" = "fatality",
+                                  "No Injury" = "no_injury")
           )
         ),
 

@@ -78,11 +78,11 @@ crash$month <-month(crash$rdate)
 crash$hour <-hour(crash$rdate)
 crash$day <-day(crash$rdate)
 
-crash.year <- ordered(crash, levels = c(2011,2012,2013,2014,2015,2016,2017,2018,2019, "major_injury", "minor_injury", "unknown_injury", "no_injury"))
+crash.year <- ordered(crash, levels = c(2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022))
 is.factor(crash.year)
 
 #filtering for incidents from 2011 onwards, that involved at least one bicycle
-crash <- crash %>% filter(year %in% 2012:2022 & total_b > 0)
+crash <- crash %>% filter(year %in% c(2012:2022) & total_b > 0)
 
 #adding categorical variable for injury/fatality
 crash$no_injury <- 0.5
@@ -113,16 +113,16 @@ getColor <- function(crash) {
   sapply(crash$injtype, function(injtype) {
     if(injtype == "no_injury") {
       "green"
-    } else if(injtype == "minor_injury"){
+    } else if(injtype == "minor_injury") {
       "yellow"
-    } else if(injtype = "major_injury"){
+    } else if(injtype = "major_injury") {
       "orange"
-    } else if(injtype = "major_injury"){
+    } else if(injtype = "major_injury") {
       "red"
-    } else if(injtype = "unknown_injury"){
+    } else if(injtype = "unknown_injury") {
       "tan"
     }
-    })
+    } )
 }
 
 getColor <- function(crash) {
@@ -140,7 +140,7 @@ icons <- awesomeIcons(
   icon = 'bicycle_outline',
   iconColor = 'black',
   library = 'ion',
-  #markerColor = getColor(crash)
+  markerColor = getColor(crash)
 )
 
 r <- leaflet(data = crash) %>% setView(lng = -77.0369, lat = 38.9072, zoom = 12)
@@ -151,11 +151,14 @@ r %>% addTiles() %>%
 
 getColor <- function(crash) {
   sapply(crash$injtype, function(injtype) {
-    if(injtype == no_injury) {
+    if(injtype == "no_injury") {
       "green"
-    } else if(injtype == minor_injury | injtype == major_injury | injtype == unknown_injury) {
-      "orange"
-    } else if(injtype == fatality){
+    } else if(injtype == "minor_injury" | injtype == "unknown_injury") {
+      "yellow"
+    } else if(injtype == "major_injury") {
+      'Orange'
+    } else if(injtype == "fatality"){
       "red"
     } })
 }
+
