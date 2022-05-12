@@ -97,12 +97,13 @@ write.csv(crash,"./data/crashes_clean.csv", row.names = FALSE)
 
 ```{r creating map}
 dcmap <- get_stamenmap(
-  bbox = c(left = -77.225, bottom = 38.835, right = -76.8125 , top = 39.000),
+  bbox = c(left = -77.225, bottom = 38.84 , right = -76.8125 , top = 39.000),
   maptype = "terrain",
   crop = TRUE,
   color = "color",
-  zoom = 13
+  zoom = 12
 )
+
 ```
 
 ```{r viewing map}
@@ -162,5 +163,16 @@ crash %>% count(inj)
 ```
 ```{r}
 crash = crash %>% filter(inj %in% c("Fatality","Major Injury", "Minor Injury", "Unknown Injury"))
+```
+```{r}
+p <- ggmap(get_googlemap(center = c(lon = -122.335167, lat = 47.608013),
+                    zoom = 11, scale = 2,
+                    maptype ='terrain',
+                    color = 'color'))
+
+```
+```{r}
+paris <- get_map(location = "paris")
+
 ```
 

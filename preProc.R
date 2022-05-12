@@ -12,7 +12,7 @@ library(maps)
 theme_set(theme_minimal())
 
 #loading raw data sets
-crash <- read.csv("/data/Crashes_in_DC.csv", stringsAsFactors = FALSE) #all crashes between April 1, 2012 to April 2022
+crash <- read.csv(file = "data/Crashes_in_DC.csv", stringsAsFactors = FALSE) #all crashes between April 1, 2012 to April 2022
 bike_reqs <- read.csv("/data/Vision_Zero_Safety_Bikers.csv", stringsAsFactors = FALSE) #Safety requests shared by bikers
 cp_reqs <- read.csv("/data/Vision_Zero_Safety_Cars_Pedestrians.csv", stringsAsFactors = FALSE) #Safety requests shared by pedestrians and drivers
 
