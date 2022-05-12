@@ -15,7 +15,7 @@ shinyServer(function(input, output) {
     })
     
     
-    #FIRST TAB
+    #FIRST TAB - INCIDENTS MAP
     output$inci <- renderLeaflet({
       r <- leaflet(data = crash) %>% setView(lng = -77.0369, lat = 38.9072, zoom = 12)
       r %>% addTiles() %>%
@@ -24,7 +24,7 @@ shinyServer(function(input, output) {
     })
     
     
-    #SECOND TAB
+    #SECOND TAB - SAFETY REQUESTS MAP
     output$safreq <- renderLeaflet({
       m <- leaflet(data = reqs) %>% setView(lng = -77.0369, lat = 38.9072, zoom = 12)
       m %>% addTiles() %>%
@@ -33,7 +33,7 @@ shinyServer(function(input, output) {
     })
     
    
-     #POTENTIAL THIRD TAB
+     #POTENTIAL THIRD TAB FOR GRAPHING
     #output$other <- renderPLot({})
                                 
 

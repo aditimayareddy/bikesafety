@@ -8,13 +8,9 @@ library(data.table)
 library(tidyverse)
 library(shiny)
 library(shinydashboard)
-#library(maps)
-#library(DT)
 library(leaflet)
-theme_set(theme_minimal())
-library(vroom) #fast data reading/importing
-library(sf) #spatial data
-library(tigris) #geojoin
+library(sf) #spatial data package to read ward shapefiles
+library(tigris) #geojoin for ward shapefiles
 library(htmlwidgets) #interactive map labels
 
 ##LOADING DATA
