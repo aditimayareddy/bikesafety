@@ -14,12 +14,171 @@ library(tidyverse)
 library(shiny)
 library(shinydashboard)
 library(maps)
+library(DT)
+library(leaflet)
+theme_set(theme_minimal())
+library(vroom) #fast data reading/importing
+library(sf) #spatial data
+library(tigris) #geojoin
+library(htmlwidgets) #interactive map labels
 
 #loading cleaned data sets
 crash <- read.csv("./data/crashes_clean.csv", stringsAsFactors = FALSE) #cleaned crash data involving at least one bicycle between 2012-2022
 reqs <- read.csv("./data/bike_reqs_clean.csv", stringsAsFactors = FALSE) #Safety requests shared by bikers
-#w <- read.csv("./data/Wards_from_2022.csv", stringsAsFactors = TRUE)
+
+#loading shapefiles for wards
+wards <- st_read("./data/wards/Wards_from_2022.shp")
+
+
+##Modifying Raw Data
+wards <- wards %>% select(ward=WARD,
+                          name=NAME
+)
 ```
+
+
+
+```{r}
+count(crash, injtype)
+```
+```{r}
+crash.injtype <- ordered(crash, levels = c("fatality", "major_injury", "minor_injury", "unknown_injury", "no_injury"))
+is.factor(crash.injtype)
+```
+
+
+```{r}
+ward_dens <- crash %>%
+  group_by(ward) %>%
+  summarize(incidents = n())
+
+```
+
+
+```{r}
+wards_1 <- geo_join(wards, ward_dens,
+                   'name', 'ward',
+                   how = 'inner')
+```
+```{r}
+saveRDS(wards_1, "./data/wards_1.RDS")
+```
+
+
+group_by(.data, ..., .add = FALSE, .drop = group_by_drop_default(.data))
+
+```{r}
+wards_1 %>%
+  ggplot(aes(x=as.numeric(incidents))) +
+  geom_histogram(bins=20, fill ='#69b3a2', color="white")
+```
+
+```{r}
+##MAKE INTERACTIVE MAP
+labels <- sprintf(
+  "<strong>%s</strong><br/>%g Total incidents 2012-2022",
+  wards_1$name, wards_1$incidents) %>%
+  lapply(htmltools::HTML)
+
+pal <-colorBin(palette = "OrRd", 9, domain = wards_1$incidents)
+
+map_interactive <- wards_1 %>%
+  st_transform(crs = "+init=epsg:4326") %>%
+  leaflet() %>%
+  addProviderTiles(provider = "CartoDB.Positron") %>%
+  addPolygons(label= labels,
+              stroke = FALSE,
+              smoothFactor = .5,
+              opacity = 1,
+              fillOpacity = 0.7,
+              fillColor = ~ pal(incidents),
+              highlightOptions = highlightOptions(weight = 5,
+                                                  fillOpacity = 1,
+                                                  color = "black",
+                                                  opacity = 1,
+                                                  bringToFront = TRUE))
+addLegend("bottomright",
+          pal= pal,
+          values = ~ incidents,
+          title = "Bike Safety Incidents",
+          opacity = 0.7)
+
+saveWidget(1, "ward_incident_density.html")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ```{r creating map}
 dcmap <- get_stamenmap(
