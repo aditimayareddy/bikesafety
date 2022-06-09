@@ -53,6 +53,9 @@ ward_dens <- crash %>%
   summarize(incidents = n())
 
 ```
+```{r}
+ward_dens
+```
 
 
 ```{r}

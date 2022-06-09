@@ -29,12 +29,12 @@ shinyServer(function(input, output) {
       m <- leaflet(data = reqs) %>% setView(lng = -77.0369, lat = 38.9072, zoom = 12)
       m %>% addTiles() %>%
         addMarkers(~lon, ~lat, popup = ~as.character(comments), label = ~as.character(reqtype),
-                   clusterOptions = markerClusterOptions())
+                   clusterOptions = markerClusterOptions(12))
     })
     
    
      #POTENTIAL THIRD TAB FOR GRAPHING
-    #output$other <- renderPLot({})
+    #output$safreq <- renderTable()
                                 
 
     })
