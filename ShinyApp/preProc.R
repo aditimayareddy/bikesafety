@@ -14,6 +14,7 @@ library(tigris) #geojoin for ward shapefiles
 library(htmlwidgets) #interactive map labels
 
 ##LOADING DATA
+
 #loading raw data sets
 bike_reqs <- read.csv("./data/Vision_Zero_Safety_Bikers.csv", stringsAsFactors = FALSE) #Safety requests shared by bikers
 cp_reqs <- read.csv("./data/Vision_Zero_Safety_Cars_Pedestrians.csv", stringsAsFactors = FALSE) #Safety requests shared by pedestrians and drivers
@@ -47,7 +48,7 @@ reqs <- reqs %>% select(lat=Y,
 reqs$rdate <-ymd_hms(reqs$rdate)
 reqs$year <-year(reqs$rdate)
 reqs$month <-month(reqs$rdate)
-reqs$month <-hour(reqs$rdate)
+reqs$hour <-hour(reqs$rdate)
 
 #exporting clean requests data to CSV
 write.csv(reqs,"./data/bike_reqs_clean.csv", row.names = FALSE)
@@ -71,8 +72,8 @@ crash <- crash %>% select(lat=LATITUDE,
 crash$rdate <-ymd_hms(crash$rdate)
 crash$year <-year(crash$rdate)
 crash$month <-month(crash$rdate)
-crash$hour <-hour(crash$rdate)
 crash$day <-day(crash$rdate)
+crash$hour <-hour(crash$rdate)
 
 crash.year <- ordered(crash, levels = c(2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022))
 is.factor(crash.year)
@@ -99,50 +100,11 @@ write.csv(crash,"./data/crashes_clean.csv", row.names = FALSE)
 m <- leaflet(data = reqs) %>% setView(lng = -77.0369, lat = 38.9072, zoom = 12)
 m %>% addTiles() %>%
   addMarkers(~lon, ~lat, popup = ~as.character(comments), label = ~as.character(reqtype),
-             clusterOptions = markerClusterOptions(freezeAtZoom = 12))
+             clusterOptions = markerClusterOptions())
 
 # Show first 20 rows from the `reqs
 leaflet(data = reqs[1:20,]) %>% addTiles() %>%
-  addMarkers(~long, ~lat, popup = ~as.character(comments), label = ~as.character(reqtype))
-
-getColor <- function(crash) {
-  sapply(crash$injtype, function(injtype) {
-    if(injtype == "no_injury") {
-      "green"
-    } else if(injtype == "minor_injury") {
-      "yellow"
-    } else if(injtype = "major_injury") {
-      "orange"
-    } else if(injtype = "major_injury") {
-      "red"
-    } else if(injtype = "unknown_injury") {
-      "tan"
-    }
-    } )
-}
-
-getColor <- function(crash) {
-  sapply(crash$injtype, function(injtype) {
-    if(injtype == no_injury) {
-      "green"
-    } else if(injtype == minor_injury | injtype == major_injury | injtype == unknown_injury) {
-      "orange"
-    } else if(injtype == fatality){
-      "red"
-    } })
-}
-
-icons <- awesomeIcons(
-  icon = 'bicycle_outline',
-  iconColor = 'black',
-  library = 'ion',
-  markerColor = getColor(crash)
-)
-
-r <- leaflet(data = crash) %>% setView(lng = -77.0369, lat = 38.9072, zoom = 12)
-r %>% addTiles() %>%
-  addAwesomeMarkers(~lon, ~lat, icon = icons, popup = ~as.character(rdate), label = ~as.character(injtype),
-             clusterOptions = markerClusterOptions())
+  addMarkers(~lon, ~lat, popup = ~as.character(comments), label = ~as.character(reqtype))
 
 
 getColor <- function(crash) {
@@ -157,4 +119,22 @@ getColor <- function(crash) {
       "red"
     } })
 }
+
+
+icons <- awesomeIcons(
+  icon = 'bicycle_outline',
+  iconColor = 'black',
+  library = 'ion',
+  markerColor = getColor(crash)
+)
+
+
+r <- leaflet(data = crash) %>% setView(lng = -77.0369, lat = 38.9072, zoom = 12)
+r %>% addTiles() %>%
+  addAwesomeMarkers(~lon, ~lat, icon = icons, popup = ~as.character(rdate), label = ~as.character(injtype),
+             clusterOptions = markerClusterOptions())
+
+
+
+##STILL TESTING
 

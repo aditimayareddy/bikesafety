@@ -37,10 +37,17 @@ wards <- wards %>% select(ward=WARD,
 )
 ```
 
+```{r}
+geom_bar()
+```
 
 
 ```{r}
-count(crash, injtype)
+trial <- reqs %>%
+  group_by(reqtype) %>%
+  count(year)
+#count(reqs, reqtype)
+trial
 ```
 ```{r}
 crash.injtype <- ordered(crash, levels = c("fatality", "major_injury", "minor_injury", "unknown_injury", "no_injury"))
@@ -219,7 +226,7 @@ dc +
 
 ```{r NEEDS HELP}
 crash %>% count(ward) %>%
-  groupby(inj)
+  group_by(injtype)
 ```
 #filtering for incidents of injury
 crash = crash %>% filter(inj %in% c("Fatality","Major Injury", "Minor Injury", "Unknown Injury"))
@@ -230,7 +237,7 @@ dc +
   geom_point(data = crash,
              aes(x = lon,
                  y = lat,
-                 color = inj),
+                 color = injtype),
              size = .7)
 
 ```
@@ -242,7 +249,7 @@ dc +
   geom_point(data = crash,
              aes(x = lon,
                  y = lat,
-                 color = fatal),
+                 color = fatality),
              size = .7)
 ```
 
