@@ -23,11 +23,12 @@ library(tigris) #geojoin
 library(htmlwidgets) #interactive map labels
 
 #loading cleaned data sets
-crash <- read.csv("./data/crashes_clean.csv", stringsAsFactors = FALSE) #cleaned crash data involving at least one bicycle between 2012-2022
-reqs <- read.csv("./data/bike_reqs_clean.csv", stringsAsFactors = FALSE) #Safety requests shared by bikers
+#preprocessing of data can be found in the preProc.R file within the Shiny App
+crash <- read.csv("./ShinyApp/data/crashes_clean.csv", stringsAsFactors = FALSE) #cleaned crash data involving at least one bicycle between 2012-2022
+reqs <- read.csv("./ShinyApp/data/bike_reqs_clean.csv", stringsAsFactors = FALSE) #Safety requests shared by bikers, or shared by drivers and pedestrians regarding bikers
 
 #loading shapefiles for wards
-wards <- st_read("./data/wards/Wards_from_2022.shp")
+wards <- st_read("./ShinyApp/data/wards/Wards_from_2022.shp")
 
 
 ##Modifying Raw Data
